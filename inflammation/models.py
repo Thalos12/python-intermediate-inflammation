@@ -41,3 +41,13 @@ def daily_min(data):
     :returns: An array of daily minimum values."""
     return np.min(data, axis=0)
 
+def patient_normalize(data):
+    """Normalize patients data from a 2D inflammation array."""
+    data[~np.isfinite(data)] = 0
+    max_data = np.max(data, axis=1)
+    with np.errstate(invalid='ignore', divide='ignore'):
+        normalised = data / max_data[:, np.newaxis]
+    normalised[~np.isfinite(normalised)] = 0
+    # normalised[np.isnan(normalised)] = 0
+    normalised[normalised<0] = 0
+    return normalised

@@ -61,18 +61,25 @@ def test_daily_min_string():
         error_expected = daily_min([['Hello', 'there'], ['General', 'Kenobi']])
 
 @pytest.mark.parametrize(
-    "test, expected",
+    "test, expected, expect_rises",
     [
-        ([[1, 2, 3], [4, 5, 6], [7, 8, 9]], [[0.33, 0.67, 1], [0.67, 0.83, 1], [0.78, 0.89, 1]]),
-        ([[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]]),
-        ([[1, 1, 1], [1, 1, 1], [1, 1, 1]], [[1, 1, 1], [1, 1, 1], [1, 1, 1]]),
-        ([[1, 2, 3], [4, 5, 6], [7, 8, 9]], [[0.33, 0.67, 1], [0.67, 0.83, 1], [0.78, 0.89, 1]]),
-        ([[np.inf, np.inf], [np.inf, np.inf], [np.inf, np.inf]], [[0, 0], [0, 0], [0, 0]]),
-        ([[1,2,3],[4,float('nan'),6],[7,8,9]], [[0.33, 0.67, 1], [0.66, 0, 1], [0.78, 0.89, 1]]),
-        ([[1,2,3],[4,5,6],[7,8,-9]], [[0.33, 0.67, 1], [0.66, 0.83, 1], [0.88, 1, 0]])
+        (np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]]), [[0.33, 0.67, 1], [0.67, 0.83, 1], [0.78, 0.89, 1]], None),
+        (np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]]), [[0, 0, 0], [0, 0, 0], [0, 0, 0]], None),
+        (np.array([[1, 1, 1], [1, 1, 1], [1, 1, 1]]), [[1, 1, 1], [1, 1, 1], [1, 1, 1]], None),
+        (np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]]), [[0.33, 0.67, 1], [0.67, 0.83, 1], [0.78, 0.89, 1]], None),
+        (np.array([[np.inf, np.inf], [np.inf, np.inf], [np.inf, np.inf]]), [[0, 0], [0, 0], [0, 0]], None),
+        (np.array([[1, 2, 3], [4, float('nan'), 6], [7, 8, 9]]), [[0.33, 0.67, 1], [0.66, 0, 1], [0.78, 0.89, 1]], None),
+        ([[1, 2, 3], [4, 5, 6], [7, 8, 9]], [[0.33, 0.67, 1], [0.66, 0.83, 1], [0.88, 1, 0]], TypeError),
+        (np.array([[1, 2, 3], [4, 5, 6], [7, 8, -9]]), [[0.33, 0.67, 1], [0.66, 0.83, 1], [0.88, 1, 0]], ValueError),
+        (np.array([1, 2, 3, 4, 5, 6, 7, 8, 9]), [[0.33, 0.67, 1], [0.66, 0.83, 1], [0.78, 1, 0]], ValueError),
+
     ])
-def test_patient_normalize(test, expected):
+def test_patient_normalize(test, expected, expect_rises):
     """Test normalization works for arrays of one and positive integers.
     Assumption that test accuracy of two decimal places is sufficient."""
     from inflammation.models import patient_normalize
-    npt.assert_almost_equal(patient_normalize(np.array(test)), np.array(expected), decimal=2)
+    if expect_rises is not None:
+        with pytest.raises(expect_rises):
+            npt.assert_almost_equal(patient_normalize(test), np.array(expected), decimal=2)
+    else:
+        npt.assert_almost_equal(patient_normalize(test), np.array(expected), decimal=2)

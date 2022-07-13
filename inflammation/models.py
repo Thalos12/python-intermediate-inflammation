@@ -41,6 +41,7 @@ def daily_min(data):
     :returns: An array of daily minimum values."""
     return np.min(data, axis=0)
 
+
 def patient_normalize(data):
     """Normalize patients data from a 2D inflammation array."""
     if not isinstance(data, np.ndarray):
@@ -57,6 +58,7 @@ def patient_normalize(data):
     # normalised[np.isnan(normalised)] = 0
     normalised[normalised<0] = 0
     return normalised
+
 
 def attach_names(data, names):
     """Assign patients' names to their inflammatory data.

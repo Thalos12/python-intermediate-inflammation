@@ -83,3 +83,17 @@ def test_patient_normalize(test, expected, expect_rises):
             npt.assert_almost_equal(patient_normalize(test), np.array(expected), decimal=2)
     else:
         npt.assert_almost_equal(patient_normalize(test), np.array(expected), decimal=2)
+
+@pytest.mark.parametrize(
+    "data, names, expected",
+    [
+        ([[1,2,3],[2,2,5]], ['Alice','Bob'], [{'name':'Alice', 'data':[1,2,3]}, {'name':'Bob', 'data':[2,2,5]}]),
+        (np.array([[1,2,3],[2,2,5]]), ['Alice','Bob'], [{'name':'Alice', 'data':[1,2,3]}, {'name':'Bob', 'data':[2,2,5]}])
+    ]
+)
+def test_attach_names(data, names, expected):
+    """Test that assigning names to inflammation data works."""
+    from inflammation.models import attach_names
+    patients = attach_names(data,names)
+    # Result must be exactly equal
+    npt.assert_equal(patients, expected)

@@ -57,3 +57,18 @@ def patient_normalize(data):
     # normalised[np.isnan(normalised)] = 0
     normalised[normalised<0] = 0
     return normalised
+
+def attach_names(data, names):
+    """Assign patients' names to their inflammatory data.
+
+    :param data: Inflammatory data provided as 2D Numpy array
+    :param names: Iterable with the names of the patients.
+    :raises ValueError: When the wrong number of names/patients' data is provided.
+    :returns: A list of dictionaries containing patients' names and inflammatory data."""
+    if len(data) != len(names):
+        raise ValueError("The number of patients does not match that of the names.")
+    patients = []
+    for d,n in zip(data,names):
+        patient = {'name':n, 'data':d}
+        patients.append(patient)
+    return patients

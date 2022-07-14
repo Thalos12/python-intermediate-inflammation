@@ -128,3 +128,22 @@ class Patient(Person):
     
     def __str__(self):
         return "{}: {}".format(self.name, self.observations)
+
+
+class Doctor(Person):
+    """A doctor with patients."""
+    def __init__(self, name, patients) -> None:
+        super().__init__(name)
+        self.patients = patients
+    
+    def get_day_observations(self, day):
+        """Get observations for all patients on the given day"""
+        observations = []
+        idx=day-1 # zero based indexing
+        for patient in self.patients:
+            try:
+                o = patient.observations[idx]
+            except IndexError:
+                o = Observation(day, None)
+            observations.append(o)
+        return observations

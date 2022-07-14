@@ -71,3 +71,29 @@ class PatientSerializerJSON(PatientSerializer):
         with open(path, 'r') as f:
             data = json.load(f)
         return cls.deserialize(data)
+
+
+class PatientSerializerCSV(PatientSerializer):
+    model = models.Patient
+
+    @classmethod
+    def save(cls, instances, path):
+        with open(path, 'w') as f:
+            writer = csv.writer(f, doublequote=True)
+            for elem in cls.serialize(instances):
+                writer.writerow([elem['name']] + [o['value'] for o in elem['observations']])
+
+    @classmethod
+    def load(cls, path):
+        with open(path, 'r') as f:
+            reader = csv.reader(f)
+            patients = []
+            for line in reader:
+                name = line.pop(0)
+                observations = []
+                for i,v in enumerate(line):
+                    observation = models.Observation(day=i, value=int(v))
+                    observations.append(observation)
+                patient = models.Patient(name, observations)
+                patients.append(patient)
+        return patients

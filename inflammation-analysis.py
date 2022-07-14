@@ -19,14 +19,23 @@ def main(args):
 
     for filename in in_files:
         inflammation_data = models.load_csv(filename)
+        
+        if args.view == 'visualize':
 
-        view_data = {'average': models.daily_mean(inflammation_data),
-                     'max': models.daily_max(inflammation_data),
-                     'min': models.daily_min(inflammation_data)
-                     }
+            view_data = {'average': models.daily_mean(inflammation_data),
+                        'max': models.daily_max(inflammation_data),
+                        'min': models.daily_min(inflammation_data)
+                        }
 
-        views.visualize(view_data)
-
+            views.visualize(view_data)
+        
+        elif args.view == 'record':
+            record = inflammation_data[args.patient]
+            observations = [models.Observation(day, value) for day,value in enumerate(record)]
+            patient = models.Patient('UNKNOWN', observations)
+            
+            views.display_patient_record(patient)
+        
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -36,6 +45,10 @@ if __name__ == "__main__":
         'infiles',
         nargs='+',
         help='Input CSV(s) containing inflammation series for each patient')
+
+    parser.add_argument('--view', type=str, choices=['visualize', 'record'], default='visualize', help="What kind of view shoud be used?")
+
+    parser.add_argument('--patient', type=int, default=0, help='Which patient to display=')
 
     args = parser.parse_args()
 

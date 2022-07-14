@@ -3,6 +3,7 @@
 from matplotlib import pyplot as plt
 import numpy as np
 
+from inflammation import serializers
 
 def visualize(data_dict):
     """Display plots of basic statistical properties of the inflammation data.
@@ -30,3 +31,7 @@ def display_patient_record(patient):
     print(patient.name)
     for obs in patient.observations:
         print(obs.day, obs.value)
+
+
+def export(patients, path):
+    serializers.PatientSerializerJSON.save(patients, path)

@@ -36,6 +36,13 @@ def main(args):
             
             views.display_patient_record(patient)
         
+        elif args.view == 'export':
+            record = inflammation_data[args.patient]
+            observations = [models.Observation(day, value) for day,value in enumerate(record)]
+            patient = models.Patient('UNKNOWN', observations)
+            
+            views.export([patient], 'patient_{}.json'.format(args.patient))
+            
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -46,7 +53,7 @@ if __name__ == "__main__":
         nargs='+',
         help='Input CSV(s) containing inflammation series for each patient')
 
-    parser.add_argument('--view', type=str, choices=['visualize', 'record'], default='visualize', help="What kind of view shoud be used?")
+    parser.add_argument('--view', type=str, choices=['visualize', 'record', 'export'], default='visualize', help="What kind of view shoud be used?")
 
     parser.add_argument('--patient', type=int, default=0, help='Which patient to display=')
 

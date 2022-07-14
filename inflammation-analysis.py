@@ -41,7 +41,7 @@ def main(args):
             observations = [models.Observation(day, value) for day,value in enumerate(record)]
             patient = models.Patient('UNKNOWN', observations)
             
-            views.export([patient], 'patient_{}.json'.format(args.patient))
+            views.export([patient], 'patient_{}.{}'.format(args.patient,args.serializer), serializer=args.serializer)
             
 
 if __name__ == "__main__":
@@ -55,7 +55,9 @@ if __name__ == "__main__":
 
     parser.add_argument('--view', type=str, choices=['visualize', 'record', 'export'], default='visualize', help="What kind of view shoud be used?")
 
-    parser.add_argument('--patient', type=int, default=0, help='Which patient to display=')
+    parser.add_argument('--patient', type=int, default=0, help='Which patient to display.')
+
+    parser.add_argument('--serializer', type=str, choices=['json','csv'], default='json')
 
     args = parser.parse_args()
 

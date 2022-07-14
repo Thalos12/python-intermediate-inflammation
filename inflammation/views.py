@@ -33,5 +33,10 @@ def display_patient_record(patient):
         print(obs.day, obs.value)
 
 
-def export(patients, path):
-    serializers.PatientSerializerJSON.save(patients, path)
+def export(patients, path, serializer):
+    if serializer == 'json':
+        serializers.PatientSerializerJSON.save(patients, path)
+    elif serializer == 'csv':
+        serializers.PatientSerializerCSV.save(patients, path)
+    else:
+        raise NotImplementedError("The serializer {} is not available".format(serializer))

@@ -8,3 +8,16 @@ def test_create_patient():
     p = Patient(name=name)
 
     assert p.name == name
+
+
+def test_add_observation():
+    from inflammation.models import Patient
+    
+    p = Patient('alice')
+    
+    observation = 3
+    
+    obs = p.add_observation(observation)
+    
+    assert p.last_observation.value == observation
+

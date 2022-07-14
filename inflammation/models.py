@@ -74,3 +74,57 @@ def attach_names(data, names):
         patient = {'name':n, 'data':d}
         patients.append(patient)
     return patients
+
+
+class Observation():
+    def __init__(self, day, value) -> None:
+        self.day=day
+        self.value=value
+    
+    def __str__(self):
+        return "On day {} inflammation value is {}".format(self.day, self.value)
+    
+    def __repr__(self):
+        return "{}:{}".format(self.day, self.value)
+
+    def __eq__(self, other):
+        return self.day==other.day and self.value==other.value
+
+class Person:
+    def __init__(self, name) -> None:
+        self.name = name
+    
+    def __str__(self):
+        return self.name
+
+class Patient(Person):
+    """A patient in an inflammation study."""
+    def __init__(self, name, observations=None):
+        super().__init__(name)
+        self.observations = []
+        if observations is not None:
+            self.observations = observations
+    
+    def add_observation(self, value, day=None):
+        if day is None:
+            try:
+                day = self.observations[-1].day + 1
+            except IndexError:
+                day = 0
+        observation = Observation(day, value)
+        self.observations.append(observation)
+        return observation
+
+    @property
+    def last_observation(self):
+        # return self.observations[-1]
+        try:
+            return self.observations[-1]
+        except IndexError:
+            print("No observations for", self.name)
+    
+    def __eq__(self,other):
+        return self.name==other.name and self.observations==other.observations
+    
+    def __str__(self):
+        return "{}: {}".format(self.name, self.observations)
